@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import Button from './Button.jsx';
+import Board from './Board.jsx';
 
 function App() {
   return (

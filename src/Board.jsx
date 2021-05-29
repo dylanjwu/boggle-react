@@ -5,17 +5,24 @@ class Board extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            squares = Array(16).fill(null)
+            squares: Array(16).fill(null)
         }
     }
     renderSquare(i){
-        return <Square id={i}> </Square>;
+        return <Square>{i}</Square>;
     }
     render(){
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let grid_items = [];
+        for (let i = 0; i < 16; i++){
+            grid_items.push(this.renderSquare(i));
+        }
         return (
-           <div> 
-
-           </div> 
+            <div className="grid-container">
+            {grid_items}
+            </div>
         );
     }
 }
+
+export default Board;

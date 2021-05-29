@@ -5,16 +5,16 @@ class Square extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-           selected = false,
+           selected: false,
         }
     }
     render(){
         return (
-            <button onClick={this.select_square()}
-            ></button>
+            <button>
+            {this.props.children}</button>
         )
     }
-    select_square(){
-        this.state.selected = !this.state.selected;
-    }
+  
 }
+
+export default Square;

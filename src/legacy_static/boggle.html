@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+
+    <title>Boggle</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Sonsie+One" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="../styles/boggle.css" />
+    <link rel="stylesheet" href="../styles/side-bar.css" />
+</head>
+
+<body>
+
+    <div class="whole">
+        <header>
+            <div id="hd">
+                <h1> BOGGLE </h1>
+            </div>
+        </header>
+
+        <main>
+            <div class="main-wrapper">
+                <div class="game-wrapper">
+                    <div class="board-wrapper">
+                        <div id="sq1"> </div>
+                        <div id="sq2"> </div>
+                        <div id="sq3"> </div>
+                        <div id="sq4"> </div>
+                        <div id="sq5"> </div>
+                        <div id="sq6"> </div>
+                        <div id="sq7"> </div>
+                        <div id="sq8"> </div>
+                        <div id="sq9"> </div>
+                        <div id="sq10"> </div>
+                        <div id="sq11"> </div>
+                        <div id="sq12"> </div>
+                        <div id="sq13"> </div>
+                        <div id="sq14"> </div>
+                        <div id="sq15"> </div>
+                        <div id="sq16"> </div>
+                    </div>
+
+                    <div class="buttons">
+                        <button id="shuffle-button">play</button>
+                        <button id="add-button"> add word </button>
+                    </div>
+
+                </div>
+
+                <div class="side-bar">
+                    <p id="timer"> </p>
+                    <h3>score: <span id="score"> </span></h3>
+
+                    <div class="listbox-area">
+                        <div class="left-area">
+                            <span id="ss_elem">
+              <h5>words </h5>
+            </span>
+                            <!-- code from: see file 'side-bar.js'  -->
+                            <ul id="ss_elem_list" tabindex="0" role="listbox" aria-labelledby="ss_elem"> </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <div id="demo"> </div>
+    <footer>
+        <!-- <p> developed by Dylan Wu </p> -->
+    </footer>
+</body>
+
+<script type="text/javascript" src="../scripts/ajaxRequest.js"></script>
+<script type="text/javascript" src="../scripts/boardLogic.js"></script>
+<script type="text/javascript" src="../scripts/graph.js"></script>
+<script type="text/javascript" src="../scripts/clock.js"></script>
+<script type="text/javascript" src="../scripts/boggle.js"></script>
+
+</html>
