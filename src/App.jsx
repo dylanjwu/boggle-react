@@ -1,10 +1,14 @@
 import './App.css';
-import Board from './Board.jsx';
+import Game from './Game';
+import SideBar from './SideBar';
 
 function App() {
   return (
     <div className="App">
-    <Board></Board> 
+       <div class="main-wrapper">
+      <Game></Game>
+      <SideBar></SideBar>
+     </div>
     </div>
   );
 }

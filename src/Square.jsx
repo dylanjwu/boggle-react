@@ -9,12 +9,16 @@ class Square extends React.Component {
         }
     }
     render(){
+        console.log(`square id: sq${this.props.id+1}`);
         return (
-            <button>
+            <button id={`sq${this.props.id+1}`}onClick={this.selectSquare()}>
             {this.props.children}</button>
         )
     }
-  
+    selectSquare(){
+        this.props.onClick();
+        console.log("clicked square");
+    }
 }
 
 export default Square;
