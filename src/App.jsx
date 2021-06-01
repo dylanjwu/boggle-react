@@ -5,7 +5,7 @@ import SideBar from './SideBar';
 function App() {
   return (
     <div className="App">
-       <div class="main-wrapper">
+       <div className="main-wrapper">
       <Game></Game>
       <SideBar></SideBar>
      </div>

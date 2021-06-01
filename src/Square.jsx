@@ -6,19 +6,24 @@ class Square extends React.Component {
         super(props);
         this.state = {
            selected: false,
+           color: 'blue'
         }
     }
     render(){
         console.log(`square id: sq${this.props.id+1}`);
         return (
-            <button id={`sq${this.props.id+1}`}onClick={this.selectSquare()}>
+            <button style={{background: this.state.color}} id={`sq${this.props.id+1}`} onClick={()=>this.onSelected()}>
             {this.props.children}</button>
         )
     }
-    selectSquare(){
+
+    onSelected(){
+        console.log(this.props.id+1);
         this.props.onClick();
-        console.log("clicked square");
+        const isBlue = this.state.color === 'blue';
+        this.setState({color: isBlue ? 'red' : 'blue'});
     }
+
 }
 
 export default Square;
