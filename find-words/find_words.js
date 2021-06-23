@@ -3,19 +3,22 @@ const LETTERS = "WODSENAATIOCILWGURGLEYKUDZANVEARSELCESPLUTAQOMBJTBYAILPECAMDORI
 class Graph {
     constructor(vertices) {
         this.numberVerts = vertices;
-        this.list = new Map();
+        this.map = new Map();
     }
     addVertex(v) {
-        this.list.set(v, []);
+        this.map.set(v, []);
     }
     addEdge(v, w) {
-        this.list.get(v).push(w);
+        this.map.get(v).push(w);
+    }
+    replaceEdgeList(v, newList) {
+        this.map.set(v, newList);
     }
     printGraph() {
         let vertices = this.adjList.keys();
 
         for (let vert of vertices) {
-            let neighbors = this.list.get(i);
+            let neighbors = this.map.get(i);
             let neighbor_str = "";
             for (let neighbor of neighbors) {
                 neighbor_str += neighbor + " ";
@@ -73,33 +76,36 @@ class Board {
         var allWords = [];
         const v_num = this.graph.numberVerts;
         for (let i = 0; i < v_num; i++) {
-            let visited = new Array(this.v_num).fill(false);
-            //allWords.concat([this.getWords(i, visited).map((arr) => [i, arr])]);
-            allWords.concat([this.getWords(i, visited)]);
-        }
-        return allWords;
-    }
-
-    getWords(v, visited) {
-        var result = [];
-        if (this.graph.list.get(v).reduce((a, b) => a && visited[b])) {
-            return [
-                []
-            ];
+            allWords.concat([this.getWords(i, Object.assign(this.graph.map)]);
+            }
+            return allWords;
         }
 
-        for (let u of this.graph.list.get(v)) {
-            if (!visited[u]) {
-                visited[u] = true;
-                let words = this.getWords(u, visited);
-                words.forEach((word) => word.push(v));
+        getWords(v, graph) {
+            var result = [];
+
+            //base case: all neighbors
+            if (graph.get(v).length <= 0) {
+                return [
+                    []
+                ];
+            }
+
+            for (let u of graph.get(v)) {
+
+                // remove v vertex from u's neighbor list
+                let newList = graph.get(u).slice().filter(el => el != v);
+                graph.replaceEdgeList(u, newList);
+
+                let words = this.getWords(u);
+                words.forEach((word) => word.push(u));
                 result.concat([...words]);
             }
-            result.concat([]);
+            result.push([]);
+
+            return result;
         }
-        return result;
     }
 
-}
-
-const board = new Board();
+    const board = new Board();
+    console.log(board.getAllWords());
