@@ -1,4 +1,5 @@
-const LETTERS = "WODSENAATIOCILWGURGLEYKUDZANVEARSELCESPLUTAQOMBJTBYAILPECAMDORIFXBKOTUDNPINESHVITEGNASOHRMHEFIYE";
+const isWord = require('is-word');
+const englishWords = isWord('american-english');
 
 class Graph {
     constructor(vertices) {
@@ -8,26 +9,24 @@ class Graph {
     addVertex(v) {
         this.map.set(v, []);
     }
+    getEdges(v) {
+        return this.map.get(v);
+    }
     addEdge(v, w) {
         this.map.get(v).push(w);
     }
-    replaceEdgeList(v, newList) {
-        this.map.set(v, newList);
-    }
     printGraph() {
-        let vertices = this.adjList.keys();
-
-        for (let vert of vertices) {
+        for (let i = 0; i < this.numberVerts; i++) {
             let neighbors = this.map.get(i);
+            console.log(neighbors);
             let neighbor_str = "";
             for (let neighbor of neighbors) {
                 neighbor_str += neighbor + " ";
             }
-            console.log(vert + "->" + neighbor_str);
+            console.log(i + "->" + neighbor_str);
         }
     }
 }
-
 
 class Board {
     constructor() {
@@ -36,6 +35,7 @@ class Board {
         this.graph = this.getAdjList();
     }
     generateRandomBoard() {
+        const LETTERS = "WODSENAATIOCILWGURGLEYKUDZANVEARSELCESPLUTAQOMBJTBYAILPECAMDORIFXBKOTUDNPINESHVITEGNASOHRMHEFIYE";
         let board = [];
         for (let i = 0; i < 4; i++) {
             let temp = [];
@@ -62,7 +62,7 @@ class Board {
         if (j > 0 && i > 0) graph.addEdge(num, above - 1);
     }
     getAdjList() {
-        let graph = new Graph(96);
+        let graph = new Graph(16);
 
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
@@ -71,41 +71,44 @@ class Board {
         }
         return graph;
     }
+    findAllWords(v) {
+        let allWords = [];
+        const graph = this.graph;
+        const board = this.board;
 
-    getAllWords() {
-        var allWords = [];
-        const v_num = this.graph.numberVerts;
-        for (let i = 0; i < v_num; i++) {
-            allWords.concat([this.getWords(i, Object.assign(this.graph.map)]);
-            }
-            return allWords;
-        }
+        (function getWords(word, visited) {
 
-        getWords(v, graph) {
-            var result = [];
-
-            //base case: all neighbors
-            if (graph.get(v).length <= 0) {
-                return [
-                    []
-                ];
+            if (word.length > 2) {
+                let stringWord = word.map((n) =>
+                    board[Math.floor(n / 4)][n % 4].toLowerCase()).join("");
+                if (englishWords.check(stringWord) && !allWords.includes(stringWord))
+                    allWords.push(stringWord);
             }
 
-            for (let u of graph.get(v)) {
+            graph.getEdges(v).forEach(function(u) {
+                if (!visited[u]) {
+                    let visitedCopy = [...visited];
+                    visitedCopy[u] = true;
+                    getWords([u, ...word], visitedCopy);
+                }
+            });
 
-                // remove v vertex from u's neighbor list
-                let newList = graph.get(u).slice().filter(el => el != v);
-                graph.replaceEdgeList(u, newList);
+        })([], new Array(graph.numberVerts).fill(false));
 
-                let words = this.getWords(u);
-                words.forEach((word) => word.push(u));
-                result.concat([...words]);
-            }
-            result.push([]);
-
-            return result;
-        }
+        return allWords;
     }
+    getAllWords() {
+        let allWords = []
+        for (let i = 0; i < this.graph.numberVerts; i++) {
+            allWords = allWords.concat(this.findAllWords(i));
+        }
 
-    const board = new Board();
-    console.log(board.getAllWords());
+        return allWords;
+    }
+}
+
+let boggleBoard = new Board();
+module.exports = {
+    board: boggleBoard.board,
+    words: boggleBoard.getAllWords()
+};
