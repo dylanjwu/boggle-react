@@ -1,12 +1,13 @@
 
 import React from 'react';
-
+const UNSEL_COL = 'lightblue';
+const SEL_COL = 'red';
 class Square extends React.Component {
     constructor(props){
         super(props);
         this.state = {
            selected: false,
-           color: 'blue'
+           color: 'lightblue'
         }
     }
     render(){
@@ -19,9 +20,11 @@ class Square extends React.Component {
 
     onSelected(){
         console.log(this.props.id+1);
-        this.props.onClick();
-        const isBlue = this.state.color === 'blue';
-        this.setState({color: isBlue ? 'red' : 'blue'});
+        if (this.props.canBeSelected()){
+            const isUnselected = this.state.color === UNSEL_COL;
+            this.setState({color: isUnselected ? SEL_COL : UNSEL_COL});
+            this.props.selectSquare();
+        }
     }
 
 }
