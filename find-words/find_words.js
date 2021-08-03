@@ -15,17 +15,6 @@ class Graph {
     addEdge(v, w) {
         this.map.get(v).push(w);
     }
-    printGraph() {
-        for (let i = 0; i < this.numberVerts; i++) {
-            let neighbors = this.map.get(i);
-            console.log(neighbors);
-            let neighbor_str = "";
-            for (let neighbor of neighbors) {
-                neighbor_str += neighbor + " ";
-            }
-            console.log(i + "->" + neighbor_str);
-        }
-    }
 }
 
 class Board {
