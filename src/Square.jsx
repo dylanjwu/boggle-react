@@ -6,7 +6,6 @@ class Square extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-           selected: false,
            color: 'lightblue'
         }
     }
@@ -20,7 +19,7 @@ class Square extends React.Component {
 
     onSelected(){
         console.log(this.props.id+1);
-        if (this.props.canBeSelected()){
+        if (this.props.isClickable()){
             const isUnselected = this.state.color === UNSEL_COL;
             this.setState({color: isUnselected ? SEL_COL : UNSEL_COL});
             this.props.selectSquare();

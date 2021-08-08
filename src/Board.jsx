@@ -37,45 +37,48 @@ class Board extends React.Component {
         );
     }
 
-    isAdjacent(prev, curr){
-        console.log("prev: " + prev);
-        console.log("curr: " + curr);
-        return Math.abs(Math.floor(prev/4)-Math.floor(curr/4)) <= 1 &&
-            Math.abs(Math.floor(prev%4)-Math.floor(curr%4)) <= 1;
-    }
-
-    canBeSelected(id){
+    isSelectable(curr){
         const word = this.state.currentWord;
         if (word.length === 0)
             return true;
-        
-        const lastSquare = word[word.length-1];
-        const currSelected = this.state.squares[id].props.selected;
-        const prevId = lastSquare.props.id;
-        const isAdj= this.isAdjacent(prevId, id);
-        console.log(isAdj);
-        return (prevId === id && currSelected) || isAdj;
+        const prev = word[word.length-1].props.id;
+        const isSelected = word.includes(this.state.squares[curr]);
+        console.log("isSelected: " + isSelected);
+        const isAdj = Math.abs(Math.floor(prev/4)-Math.floor(curr/4)) <= 1 &&
+            Math.abs(Math.floor(prev%4)-Math.floor(curr%4)) <= 1;
+        return isAdj && !isSelected;
+    }
+
+    isUnselectable(curr){
+        const word = this.state.currentWord;
+        if (word.length > 0){
+            const prev = word[word.length-1].props.id;
+            console.log(`unselectable: curr, prev: ${curr}, ${prev}`);
+            return curr === prev;
+        }
+        return false;
+    }
+    
+    isClickable(id){
+        const unsel = this.isUnselectable(id) 
+        const sel = this.isSelectable(id);
+        console.log(`unsel, sel: ${unsel}, ${sel}`);
+        return unsel || sel;
     }
 
     onSquareClicked(id){
         console.log(`SQUARE with id ${id} CLICKED`);
         console.log(this.state.squares[id].props);
-        if (this.state.currentWord.includes(this.state.squares[id])){
-            const word = this.state.currentWord;
-            const lastSquare = word[word.length-1];
-            const prevId = lastSquare.props.id;
-            if (prevId === id){
-                this.removeLetter(id);
-            }
+        if (this.isUnselectable(id)){
+            this.removeLetter(id);
         }
-        else{
+        else if (this.isSelectable(id)) {
             this.addLetter(id);
         }
-
     }
 
     renderSquare(id, letter){
-        return <Square id={id} selected={false} canBeSelected={()=> this.canBeSelected(id)} selectSquare={()=>this.onSquareClicked(id)} >{letter}</Square>;
+        return <Square id={id} isClickable={()=> this.isClickable(id)} selectSquare={()=>this.onSquareClicked(id)} >{letter}</Square>;
     }
     getRandomLetter(){
         const rand_i = Math.floor(Math.random()*ALPHABET.length);
