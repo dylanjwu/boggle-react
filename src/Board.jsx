@@ -3,28 +3,42 @@ import Square from './Square.jsx'
 //import _ from 'lodash';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const UNSEL_COL = 'lightblue';
+const SEL_COL = 'red';
+
 class Board extends React.Component {
     constructor(props){
         super(props);
+        this.letters = new Array(16).fill(null).map(() => this.getRandomLetter());
         this.state = {
             squares: this.fillSquares(),
-            currentWord: []
+            currentWord: [],
+            words: [],
         }
     }
     fillSquares(){
         let squares = [];
-        for (let i = 0; i < 16; i++){
-            squares.push(this.renderSquare(i, this.getRandomLetter()));
-        }
+        this.letters.forEach(
+            (letter, id) => 
+            squares.push(this.renderSquare(id, letter))
+        );
         return squares; 
     }
+    changeSquareColor(square_id, color){
+        const squares = this.state.squares.slice();
+        console.log("square: " + square_id + " " + squares[square_id].props);
+        //squares[square_id].style.background = color;
+        this.setState({squares: squares});
+    }
+
     addLetter(square_id){
         console.log("add letter");
         let newCurrentWord = this.state.currentWord.slice();
         newCurrentWord.push(this.state.squares[square_id]);
         this.setState({currentWord: newCurrentWord}, () => 
-            console.log("current word: " + this.state.currentWord.map(a => a.props.children))
+            console.log("current word: " + this.state.currentWord.map(letter => letter.children))
         );
+        this.changeSquareColor(square_id, SEL_COL);
     }
     removeLetter(square_id) {
         // you can only remove last square added, but needs to be at Square component
@@ -33,15 +47,16 @@ class Board extends React.Component {
         let currentWord = currWord.slice();
         currentWord.pop();
         this.setState({currentWord: currentWord}, () =>
-            console.log("current word: " + this.state.currentWord.map(a => a.props.children))
+            console.log("current word: " + this.state.currentWord.map(a => a.children))
         );
+        this.changeSquareColor(square_id, UNSEL_COL);
     }
 
     isSelectable(curr){
         const word = this.state.currentWord;
         if (word.length === 0)
             return true;
-        const prev = word[word.length-1].props.id;
+        const prev = word[word.length-1].id;
         const isSelected = word.includes(this.state.squares[curr]);
         console.log("isSelected: " + isSelected);
         const isAdj = Math.abs(Math.floor(prev/4)-Math.floor(curr/4)) <= 1 &&
@@ -52,7 +67,7 @@ class Board extends React.Component {
     isUnselectable(curr){
         const word = this.state.currentWord;
         if (word.length > 0){
-            const prev = word[word.length-1].props.id;
+            const prev = word[word.length-1].id;
             console.log(`unselectable: curr, prev: ${curr}, ${prev}`);
             return curr === prev;
         }
@@ -68,7 +83,6 @@ class Board extends React.Component {
 
     onSquareClicked(id){
         console.log(`SQUARE with id ${id} CLICKED`);
-        console.log(this.state.squares[id].props);
         if (this.isUnselectable(id)){
             this.removeLetter(id);
         }
@@ -78,17 +92,38 @@ class Board extends React.Component {
     }
 
     renderSquare(id, letter){
-        return <Square id={id} isClickable={()=> this.isClickable(id)} selectSquare={()=>this.onSquareClicked(id)} >{letter}</Square>;
+        // return <Square id={id} isClickable={()=> this.isClickable(id)} selectSquare={()=>this.onSquareClicked(id)} >{letter}</Square>;
+        return <button style={{background: UNSEL_COL}} id={`sq${id+1}`} onClick={()=>this.onSquareClicked(id)}>
+            {letter}</button>;
     }
+
     getRandomLetter(){
         const rand_i = Math.floor(Math.random()*ALPHABET.length);
         return ALPHABET[rand_i] === 'Q' ? 'Qu' : ALPHABET[rand_i];
     }
+
+    addWord(){
+        const currWord = this.state.currentWord;
+        if (currWord.length > 2){
+            const words = this.state.words.slice();
+            // TODO: API FETCH REQUEST TO CHECK IF WORD IS LEGIT
+            words.push(currWord.map((square)=>square.children).join(""));
+            this.setState({words: words}, function() {
+                console.log("words: " + this.state.words);
+            });
+            this.setState({squares: this.fillSquares});
+        }
+    }
+
     render(){
 
         return (
-            <div className="board">
-            {this.state.squares}
+            <div className="board-wrapper">
+                <div className="board">{this.state.squares}</div>
+                <div className="buttons">
+                    <button id="shuffle-button">play</button>
+                    <button onClick={()=>this.addWord()} id="add-button"> add word </button>
+                </div> 
             </div>
         );
     }

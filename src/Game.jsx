@@ -1,18 +1,14 @@
 import React from 'react';
 import Board from './Board';
 
-class BoardContainer extends React.Component {
+class Game extends React.Component {
     render(){
         return (
-            <div className="game-wrapper">
+            <div>
                 <Board></Board>
-                <div className="buttons">
-                    <button id="shuffle-button">play</button>
-                    <button onClick={()=> alert()} id="add-button"> add word </button>
-                </div> 
             </div>
         )
     }
 }
 
-export default BoardContainer;
+export default Game;

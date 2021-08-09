@@ -22,7 +22,7 @@ title {
     border: 3px solid black;
 }
 
-.game-wrapper {
+.board-wrapper {
     /* position: sticky; */
     border: 3px solid lightslategrey;
     height: 500px;
