@@ -5,27 +5,13 @@ const SEL_COL = 'red';
 class Square extends React.Component {
     constructor(props){
         super(props);
-        this.state = {
-           color: 'lightblue'
-        }
     }
     render(){
-        console.log(`square id: sq${this.props.id+1}`);
         return (
-            <button style={{background: this.state.color}} id={`sq${this.props.id+1}`} onClick={()=>this.onSelected()}>
+            <button style={{background: this.state.color}} id={`sq${this.props.id+1}`} >
             {this.props.children}</button>
         )
     }
-
-    onSelected(){
-        console.log(this.props.id+1);
-        if (this.props.isClickable()){
-            const isUnselected = this.state.color === UNSEL_COL;
-            this.setState({color: isUnselected ? SEL_COL : UNSEL_COL});
-            this.props.selectSquare();
-        }
-    }
-
 }
 
 export default Square;
