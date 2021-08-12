@@ -95,8 +95,11 @@ class Board {
         return allWords;
     }
 }
-const boggleBoard = new Board();
+
+const game = function() {
+    const boggleBoard = new Board();
+    return { board: boggleBoard.board, words: boggleBoard.getAllWords() };
+}
 module.exports = {
-    board: boggleBoard.board,
-    words: boggleBoard.getAllWords()
+    game: game,
 };

@@ -4,25 +4,28 @@ import React from 'react';
 
 const UNSEL_COL = 'lightblue';
 const SEL_COL = 'red';
+const SERVER_PREFIX = 'http://localhost:3000/';
 
 class Board extends React.Component {
     constructor(props){
         super(props);
-        this.letters = new Array(16).fill('a'); // fetch letters
         this.state = {
-            squares: this.letters.map((l, i)=>({id: i, letter: l, selected: UNSEL_COL})),
+            squares: null,
             currentWord: [],
             words: [],
         }
     }
-    async getBoard() {
-        const resp = await fetch('http://localhost:3000/board');
-        return await resp.json();
+ 
+    async componentDidMount() {
+        const response = await fetch(SERVER_PREFIX + 'board');
+        const board = await response.json();
+        const letters = await [].concat(...board);
+        console.log(letters);
+        const squares = await letters.map((l, i)=>({id: i, letter: l, selected: UNSEL_COL}));
+        this.setState({squares: squares});
+        console.log(squares);
     }
-    async isWord(){
-        const resp = await fetch('http://localhost:3000/words');
-        return await resp.json();
-    }
+
     fillSquares(){
         let squares = [];
         this.state.squares.forEach(
@@ -30,6 +33,9 @@ class Board extends React.Component {
             squares.push(this.renderSquare(id, square.letter, square.selected))
         );
         return squares; 
+    }
+    clearSquares(){
+
     }
     changeSquareColor(square_id, color){
         console.log(`${square_id}: ${color}`)
@@ -69,7 +75,6 @@ class Board extends React.Component {
         const isSelected = word.includes(this.state.squares[curr]);
         const isAdj = Math.abs(Math.floor(prev/4)-Math.floor(curr/4)) <= 1 &&
             Math.abs(Math.floor(prev%4)-Math.floor(curr%4)) <= 1;
-        console.log(isAdj, isSelected);
         return isAdj && !isSelected;
     }
 
@@ -106,34 +111,42 @@ class Board extends React.Component {
             {letter}</button>;
     }
 
-    addWord(){
-        const currWord = this.state.currentWord;
+    async addWord(){
+        let currWord = this.state.currentWord;
         if (currWord.length > 2){
-            const words = this.state.words.slice();
-            // TODO: API FETCH REQUEST TO CHECK IF WORD IS LEGIT
-            words.push(currWord.map((square)=>square.letter).join(""));
-            this.setState({words: words}, function() {
-                console.log("words: " + this.state.words);
-            });
+            currWord = currWord.map((sqr)=>sqr.letter).join("").toLowerCase();
+            const response = await fetch(SERVER_PREFIX + 'check_word', {
+                    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                    mode: 'cors', // no-cors, *cors, same-origin
+                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                    credentials: 'same-origin', // include, *same-origin, omit
+                    headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    redirect: 'follow', // manual, *follow, error
+                    referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                    body: JSON.stringify(currWord) // body data type must match "Content-Type" header
+              });
+            const isWord = await response.json();
+            if (isWord){
+                let wordsCopy = [...this.state.words]
+                wordsCopy.push(this.state.currWord);
+                this.setState({words: wordsCopy}, function(){
+                    console.log(this.state.words);
+                });
+            }
         }
-    }
-
-    displayWords(){
-        this.isWord()
-            .then(res=>console.log(res))
-            .then(data=>data.json())
-            .then(toPrint=>console.log(toPrint))
-            .catch(err=>console.log(`error: ${err}`));
     }
 
     render(){
 
         return (
             <div className="board-wrapper">
-                <div className="board">{this.fillSquares()}</div>
+                <div className="board">{this.state.squares !== null ? this.fillSquares() : <div>...loading</div> }</div>
                 <div className="buttons">
                     <button id="shuffle-button">play</button>
-                    <button onClick={()=>this.displayWords()} id="add-button"> add word </button>
+                    <button onClick={()=>this.addWord()} id="add-button"> add word </button>
                 </div> 
             </div>
         );
