@@ -7,6 +7,7 @@ const { game } = require('./find_words');
 
 const app = express();
 app.use(cors());
+app.use(express.urlencoded({ extended: false }));
 const port = 3000
 
 let game_info = { board: null, words: null };
@@ -21,8 +22,9 @@ app.get('/board', (req, res) => {
     res.send(game_info.board);
 })
 app.post('/check_word', (req, res) => {
-    const containsWord = game_info.words !== null && game_info.words.includes(req);
-    console.log(req);
+    const containsWord = game_info.words !== null && game_info.words.includes(req.body.word);
+    console.log(game_info.words);
+    console.log(req.body.word);
     console.log(containsWord);
     res.send(containsWord);
 })

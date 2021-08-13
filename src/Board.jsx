@@ -35,7 +35,12 @@ class Board extends React.Component {
         return squares; 
     }
     clearSquares(){
-
+        let squares = [...this.state.squares];
+        squares.forEach(function(square){
+            square.selected = UNSEL_COL;
+        });
+        this.setState({squares: squares});
+        this.setState({currentWord: []});
     }
     changeSquareColor(square_id, color){
         console.log(`${square_id}: ${color}`)
@@ -116,27 +121,25 @@ class Board extends React.Component {
         if (currWord.length > 2){
             currWord = currWord.map((sqr)=>sqr.letter).join("").toLowerCase();
             const response = await fetch(SERVER_PREFIX + 'check_word', {
-                    method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                    mode: 'cors', // no-cors, *cors, same-origin
-                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                    credentials: 'same-origin', // include, *same-origin, omit
-                    headers: {
-                    'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    redirect: 'follow', // manual, *follow, error
-                    referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                    body: JSON.stringify(currWord) // body data type must match "Content-Type" header
-              });
+                method: 'POST',
+                mode: 'cors',
+                body: new URLSearchParams({
+                    'word': currWord,
+                    })
+                });
+
             const isWord = await response.json();
+            console.log(isWord);
             if (isWord){
                 let wordsCopy = [...this.state.words]
-                wordsCopy.push(this.state.currWord);
+                wordsCopy.push(currWord);
                 this.setState({words: wordsCopy}, function(){
                     console.log(this.state.words);
                 });
+                
             }
         }
+        this.clearSquares();
     }
 
     render(){
