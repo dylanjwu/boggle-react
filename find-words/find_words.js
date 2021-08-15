@@ -20,7 +20,7 @@ class Graph {
 class Board {
     constructor() {
         this.board = this.generateRandomBoard();
-        this.words = {};
+        this.words = [];
         this.graph = this.getAdjList();
     }
     generateRandomBoard() {
@@ -60,39 +60,32 @@ class Board {
         }
         return graph;
     }
-    findAllWords(v) {
-        let allWords = [];
+    findAllWords(start) {
         const graph = this.graph;
         const board = this.board;
-
-        (function getWords(word, visited) {
-
+        let words = this.words;
+        (function getWords(word, v, visited) {
             if (word.length > 2) {
                 let stringWord = word.map((n) =>
                     board[Math.floor(n / 4)][n % 4].toLowerCase()).join("");
-                if (englishWords.check(stringWord) && !allWords.includes(stringWord))
-                    allWords.push(stringWord);
+                if (englishWords.check(stringWord) && !words.includes(stringWord)) {
+                    words.push(stringWord);
+                }
             }
-
             graph.getEdges(v).forEach(function(u) {
                 if (!visited[u]) {
                     let visitedCopy = [...visited];
                     visitedCopy[u] = true;
-                    getWords([u, ...word], visitedCopy);
+                    getWords([u, ...word], u, visitedCopy);
                 }
             });
-
-        })([], new Array(graph.numberVerts).fill(false));
-
-        return allWords;
+        })([], start, new Array(graph.numberVerts).fill(false));
     }
     getAllWords() {
-        let allWords = []
         for (let i = 0; i < this.graph.numberVerts; i++) {
-            allWords = allWords.concat(this.findAllWords(i));
+            this.findAllWords(i);
         }
-
-        return allWords;
+        return this.words.sort((a, b) => a[0] > b[0]);
     }
 }
 
@@ -100,6 +93,12 @@ const game = function() {
     const boggleBoard = new Board();
     return { board: boggleBoard.board, words: boggleBoard.getAllWords() };
 }
+const g = game();
+const board = g.board;
+const words = g.words;
+console.log(board);
+console.log(words);
+
 module.exports = {
     game: game,
 };
